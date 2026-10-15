@@ -79,7 +79,7 @@ function MascotScene({compact=false}:{compact?:boolean}) {
   return compact ? <AwardIllustration/> : <HeroIllustration/>;
 }
 function TopBar({ label, back, right }: { label: string; back?: () => void; right?: ReactNode }) {
-  return <header className="topbar">{back ? <button className="icon-btn" onClick={back} aria-label="返回"><Symbol name="back"/></button> : <span className="logo-mark"><span className="logo-spark">✳</span> 一起玩</span>}<strong>{label}</strong><div className="topbar-action">{right}</div></header>;
+  return <header className="topbar">{back ? <button className="icon-btn" onClick={back} aria-label="返回"><Symbol name="back"/></button> : <span className="logo-mark"><Symbol name="sparkle" size={16}/> 一起玩</span>}<strong>{label}</strong><div className="topbar-action">{right}</div></header>;
 }
 function Button({ children, onClick, variant = 'primary', disabled = false, className = '' }: { children: ReactNode; onClick?: () => void; variant?: 'primary' | 'secondary' | 'ghost'; disabled?: boolean; className?: string }) {
   return <button type="button" className={`btn btn-${variant} ${className}`} onClick={onClick} disabled={disabled}>{children}</button>;
