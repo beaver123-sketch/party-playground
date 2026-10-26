@@ -38,9 +38,6 @@ export function MascotAvatar({index,size=42}: {index:number;size?:number}){
  return <img className="real-avatar v04-avatar" width={size} height={size} src={`/art/v04/avatars/${id}.svg`} draggable={false} alt={`玩家卡通头像 ${id}`} style={{objectFit:'cover',borderRadius:'50%',flexShrink:0}}/>;
 }
 
-function GlowStars(){return <g fill="#fff4ce"><path d="M57 55l5 14 14 5-14 4-5 14-5-14-14-4 14-5z" opacity=".9"/><path d="M381 54l4 10 10 4-10 4-4 10-4-10-10-4 10-4z" fill="#75daff"/><circle cx="402" cy="181" r="3"/><circle cx="71" cy="212" r="3" fill="#fd73d9"/></g>}
-function Skyline(){return <g opacity=".8"><path d="M0 220V85l40-25v140l36-12V76l44-30v142l39-12V28l48-23v228H0" fill="#111135"/><path d="M480 220V77l-35-25v134l-31-12V58l-42-29v178l-44-17V38l-39-18v213h191" fill="#101033"/><path d="M15 123h14v20H15zM90 95h14v18H90zM115 143h14v20h-14zM177 65h15v28h-15zM365 95h13v19h-13zM440 116h17v22h-17z" fill="#f33aeb" opacity=".55"/><path d="M33 159h16v19H33zM324 128h15v24h-15zM395 94h13v18h-13z" fill="#36ccff" opacity=".8"/></g>}
-function Dice(){return <g transform="translate(262 192) rotate(-10)"><ellipse cx="0" cy="110" rx="111" ry="33" fill="#8b24fa" opacity=".25"/><path d="M-82-57 L6-91 L84-45 L-6-6Z" fill="#fc49bf" stroke="#ffbaee" strokeWidth="7"/><path d="M-82-57 L-6-6 L-5 86 L-82 43Z" fill="#5e1eb0" stroke="#ff69e8" strokeWidth="7"/><path d="M-6-6 L84-45 L87 45 L-5 86Z" fill="#b326bc" stroke="#ff9ee4" strokeWidth="7"/><g fill="#fff2a5" filter="url(#softLight)"><circle cx="-46" cy="-8" r="9"/><circle cx="-46" cy="30" r="9"/><circle cx="39" cy="-3" r="9"/><circle cx="43" cy="45" r="9"/><path d="M0-67l7 12 13 5-13 6-7 12-7-12-13-6 13-5z"/></g></g>}
 export function HeroIllustration(){
  return <img className="hero-illustration" src="/art/v04/hero.svg" alt="霓虹城市中的卡通怪物朋友、游戏骰子与卡牌" draggable={false}/>;
 }
