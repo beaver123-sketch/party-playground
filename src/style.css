@@ -166,22 +166,6 @@ html,body,#root{min-height:100%;background:#03081c}
 @media(max-width:420px){.app-shell{padding:0}.app-frame{min-height:100svh;border-radius:0;border-left:0;border-right:0}.topbar{padding:0 15px}.page{padding:0 15px 98px}.hero-card{height:212px}.home-head h1{font-size:29px}.featured-card{min-height:132px}.game-grid .game-tile-image{width:95px}.room-players{gap:5px}}
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important}}
 
-/* v0.3: pixel-accurate original illustration fragments from the APPROVED artwork,
-   not emoji, not CSS-generated cartoon faces. */
-img.real-avatar{display:block;border-radius:50%;filter:drop-shadow(0 0 5px #9b5aff66);background:#121b42}
-.artwork-avatar,.avatar.artwork-avatar{overflow:hidden!important;outline:1px solid #6c8fea55;outline-offset:1px;box-shadow:0 0 10px #715eff44!important}
-.game-illustration,.hero-illustration,.award-illustration{display:block;width:100%;height:100%;object-fit:cover;filter:saturate(1.12) contrast(1.06)}
-.hero-card{height:225px;overflow:hidden;border:1px solid #9e53fb;box-shadow:0 0 0 1px #dc55f226,0 10px 45px #04041b,inset 0 0 22px #ef48ff24}
-.hero-card .hero-illustration{inset:0;position:absolute;object-position:center center}
-.hero-card .hero-sticker{background:#080a27b9;top:9px;left:10px}
-.hero-card .hero-caption{font-size:17px;letter-spacing:.2px;font-weight:900;background:linear-gradient(0deg,#090a2d 8%,#080d29b5 66%,transparent);padding-bottom:14px}
-.featured-card .game-illustration,.game-tile .game-illustration,.intro-cover .game-illustration,.secret-main .game-illustration{object-position:50% 45%}
-.featured-card:after{inset:48% 0 0;background:linear-gradient(transparent,#080727f0)}
-.game-tile-image{overflow:hidden}
-.game-tile-image .game-illustration{border-radius:9px}
-.win-art>.award-illustration,.report-visual>.award-illustration{position:absolute;inset:0;object-fit:cover}
-.real-avatar{user-select:none;-webkit-user-drag:none}
-
 /* ==========================================================
  * V0.4 · THREE CORE SCREENS — LOCKED APPROVED DESIGN SYSTEM
  * Home / Create / Room. No emoji in iconography or artwork.
@@ -320,3 +304,24 @@ img.real-avatar{display:block;border-radius:50%;filter:drop-shadow(0 0 5px #9b5a
 @media(max-width:389px){.v4-brand{font-size:57px}.v4-brand-sub{font-size:18px}.v4-people-control{gap:7px;padding-left:6px;padding-right:6px}.v4-count-figures{width:60px}.v4-people-control .number-control{gap:5px}.v4-room-roster{gap:10px 4px}.v4-room-person{flex-basis:calc(20% - 4px)}.v4-leader-row{gap:4px;grid-template-columns:19px 32px minmax(37px,1fr) minmax(40px,80px) 23px}.v4-player-line{height:43px}}
 @media(max-width:440px){.app-shell{padding:0!important}.v4-frame{width:100%;max-width:100%;border:0;border-radius:0;min-height:100dvh}.v4-home{min-height:100dvh}.v4-frame .bottom-nav{position:fixed;max-width:440px;left:50%;transform:translateX(-50%);width:100%}.v4-room-toolbar{position:sticky}}
 @media(prefers-reduced-motion:reduce){.v4-frame *{animation:none!important;transition:none!important}}
+
+
+/* V0.4 approved 20-piece independent SVG illustration integration. */
+.v4-home-illustration{background:#080d2b;isolation:isolate}
+.v4-home-illustration:before{z-index:2;background:linear-gradient(180deg,#050920bd 0%,transparent 21%,transparent 54%,#060e26 97%),linear-gradient(90deg,#040924b8 0%,transparent 53%,transparent 100%)}
+.v4-home-illustration img{width:100%;height:100%;top:0;left:0;right:auto;object-fit:cover;object-position:center 52%;filter:none;max-width:none;transform:none}
+.v4-home-head{padding-top:35px}
+.v4-brand{font-size:65px}
+.v4-hero-bottom{height:213px}
+.v4-popular-card img{object-position:center 40%;filter:none}
+.v4-create:before{background-image:url('/art/v04/hero.svg');background-position:55% 30%;opacity:.18;filter:none}
+.v4-count-figures img{object-fit:cover}
+.v4-room:before{background-image:url('/art/v04/room-background.svg');opacity:.27;filter:none}
+.v4-room-person .real-avatar,.v4-leader-row .real-avatar{border:1.5px solid #bc8bff;box-shadow:0 0 0 2px #1a1c52,0 0 13px #9566fc90}
+.v4-suggestion .game-illustration{width:100%;height:100%;object-fit:cover;object-position:center 34%}
+.v4-room-suggestions .v4-suggestion-shade{background:linear-gradient(180deg,transparent 42%,#050822f3 100%)}
+.secret-main{position:relative}
+.secret-main .wolf-character{display:block;width:100%;height:100%;object-fit:contain;object-position:center center;background:radial-gradient(ellipse at 50% 30%,#bd24826d,#1b1043 65%,#0c0c2b)}
+.real-avatar.v04-avatar{background:#080c2a}
+@media(min-width:750px){.v4-home-illustration img{object-position:center 52%}}
+@media(max-width:420px){.v4-home-illustration img{object-position:center 52%}}

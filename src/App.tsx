@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState, type ReactNode } from 'react';
-import { AwardIllustration, GameIllustration, HeroIllustration, MascotAvatar } from './Visuals';
+import { AwardIllustration, GameIllustration, HeroIllustration, MascotAvatar, WolfCharacter } from './Visuals';
 
 // 本机单设备 MVP：不依赖后端，聚会信息持久化到浏览器 localStorage。
 type Screen = 'home' | 'create' | 'room' | 'library' | 'game' | 'result' | 'report' | 'history' | 'me';
@@ -79,7 +79,7 @@ function MascotScene({compact=false}:{compact?:boolean}) {
   return compact ? <AwardIllustration/> : <HeroIllustration/>;
 }
 function TopBar({ label, back, right }: { label: string; back?: () => void; right?: ReactNode }) {
-  return <header className="topbar">{back ? <button className="icon-btn" onClick={back} aria-label="返回"><Symbol name="back"/></button> : <span className="logo-mark"><Symbol name="sparkle" size={16}/> 一起玩</span>}<strong>{label}</strong><div className="topbar-action">{right}</div></header>;
+  return <header className="topbar">{back ? <button className="icon-btn" onClick={back} aria-label="返回"><Symbol name="back"/></button> : <span className="logo-mark"><span className="logo-spark">✳</span> 一起玩</span>}<strong>{label}</strong><div className="topbar-action">{right}</div></header>;
 }
 function Button({ children, onClick, variant = 'primary', disabled = false, className = '' }: { children: ReactNode; onClick?: () => void; variant?: 'primary' | 'secondary' | 'ghost'; disabled?: boolean; className?: string }) {
   return <button type="button" className={`btn btn-${variant} ${className}`} onClick={onClick} disabled={disabled}>{children}</button>;
@@ -176,7 +176,7 @@ export default function App() {
     <div className={`app-frame ${['home','create','room'].includes(screen) ? 'v4-frame' : ''}`}>
       {screen === 'home' && <>
         <main className="page v4-home" aria-label="一起玩首页">
-          <div className="v4-home-illustration" aria-hidden="true"><img src="/art/home-stage.webp" alt=""/></div>
+          <div className="v4-home-illustration" aria-hidden="true"><img src="/art/v04/hero.svg" alt=""/></div>
           <div className="v4-home-head">
             <span className="v4-kicker">GOOD GAMES · BETTER FRIENDS</span>
             <h1 className="v4-brand">一起玩<span className="v4-brand-spark">✦</span></h1>
@@ -199,12 +199,12 @@ export default function App() {
           <div className="v4-section-bar"><h2>本周人气游戏</h2><button onClick={()=>setScreen('library')}>查看更多 <Symbol name="next" size={17}/></button></div>
           <section className="v4-popular" aria-label="热门聚会游戏">
             <button className="v4-popular-card v4-popular-wolf" onClick={()=>launchGame('wolf')}>
-              <img src="/art/wolf.webp" alt="狼人主题游戏封面"/>
+              <img src="/art/v04/covers/wolf.svg" alt="狼人主题游戏封面"/>
               <span className="v4-popular-shade"/>
               <span className="v4-popular-text"><strong>饭桌狼人杀</strong><small>4–10人 · 推理 · 高互动</small></span>
             </button>
             <button className="v4-popular-card v4-popular-mission" onClick={()=>launchGame('mission')}>
-              <img src="/art/mission.webp" alt="秘密任务局主题游戏封面"/>
+              <img src="/art/v04/covers/mission.svg" alt="秘密任务局主题游戏封面"/>
               <span className="v4-popular-shade"/>
               <span className="v4-popular-text"><strong>秘密任务局</strong><small>3–10人 · 整活 · 隐藏任务</small></span>
             </button>
@@ -219,7 +219,7 @@ export default function App() {
           <section className="v4-create-section">
             <h2 className="v4-step-title"><span>1</span>选择人数</h2>
             <div className="v4-people-control">
-              <span className="v4-count-figures" aria-hidden="true"><img src="/art/avatar-2.webp" alt=""/><img src="/art/avatar-3.webp" alt=""/></span>
+              <span className="v4-count-figures" aria-hidden="true"><img src="/art/v04/avatars/2.svg" alt=""/><img src="/art/v04/avatars/3.svg" alt=""/></span>
               <small>2–10 人</small>
               <NumberControl count={draftPlayers.length} setCount={setCount}/>
             </div>
@@ -293,7 +293,7 @@ export default function App() {
       {screen === 'game' && party && <><TopBar label={game.name} back={()=>round.phase==='intro' ? setScreen('room') : setConfirmEnd(true)} right={<span className="tag tag-light">{players.length}人 · {hostedBy}</span>}/><main className="page play-page">
         {round.phase === 'intro' && <><div className={`intro-cover game-${game.theme}`}><GameIllustration game={game.id}/><span className="intro-cover-glow"/></div><div className="intro-title"><span className="tag tag-highlight">{game.category}游戏 · 约{game.mins}分钟</span><h1>{game.name}</h1><p>{game.description}</p></div><section className="instruction"><h3><Symbol name="sparkle" size={18}/> 怎么玩？</h3>{game.rules.map((r,i)=><div key={r}><span>{String(i+1).padStart(2,'0')}</span><p>{r}</p></div>)}</section><Button onClick={startRound}>准备好了，开始游戏 <Symbol name="next"/></Button></>}
         {round.phase === 'deal' && <><div className="step-meta"><span>秘密发牌</span><span>{round.roleIndex+1} / {players.length}</span></div><div className="progress"><div style={{width:`${(round.roleIndex+1)/players.length*100}%`}}/></div><h2 className="center-heading">把手机交给 <em>{players[round.roleIndex]?.name}</em></h2><div className="reveal-person"><Avatar player={players[round.roleIndex]} size={78}/><strong>{players[round.roleIndex]?.name}</strong><p>请确认只有你能看到屏幕</p></div>
-          {!round.revealed ? <div className="secret-cover" onClick={()=>setRound(s=>({...s,revealed:true}))} role="button" tabIndex={0}><Symbol name="lock" size={42}/><strong>点击查看秘密身份</strong><span>注意不要让其他玩家看见</span></div> : <div className="secret-card"><span className="tag tag-highlight">仅本人可见</span><div className="secret-main"><GameIllustration game={currentGame==='wolf'?'wolf':currentGame==='undercover'?'undercover':'mission'}/></div><h2>{currentGame==='undercover' ? '你的关键词' : currentGame==='wolf' ? (players[round.roleIndex]?.id===round.wolfId ? '你是狼人！' : '你是普通玩家') : '你的秘密任务'}</h2><p>{currentGame==='undercover' ? (players[round.roleIndex]?.id===round.undercoverId ? undercoverPairs[round.pairIndex][1] : undercoverPairs[round.pairIndex][0]) : currentGame==='wolf' ? (players[round.roleIndex]?.id===round.wolfId ? wolfTasks[round.taskIndex] : '注意观察身边的人，找到偷偷执行任务的狼人。') : secretTasks[round.missions[round.roleIndex]]}</p></div>}
+          {!round.revealed ? <div className="secret-cover" onClick={()=>setRound(s=>({...s,revealed:true}))} role="button" tabIndex={0}><Symbol name="lock" size={42}/><strong>点击查看秘密身份</strong><span>注意不要让其他玩家看见</span></div> : <div className="secret-card"><span className="tag tag-highlight">仅本人可见</span><div className="secret-main">{currentGame==='wolf' && players[round.roleIndex]?.id===round.wolfId ? <WolfCharacter/> : <GameIllustration game={currentGame==='wolf'?'wolf':currentGame==='undercover'?'undercover':'mission'}/>}</div><h2>{currentGame==='undercover' ? '你的关键词' : currentGame==='wolf' ? (players[round.roleIndex]?.id===round.wolfId ? '你是狼人！' : '你是普通玩家') : '你的秘密任务'}</h2><p>{currentGame==='undercover' ? (players[round.roleIndex]?.id===round.undercoverId ? undercoverPairs[round.pairIndex][1] : undercoverPairs[round.pairIndex][0]) : currentGame==='wolf' ? (players[round.roleIndex]?.id===round.wolfId ? wolfTasks[round.taskIndex] : '注意观察身边的人，找到偷偷执行任务的狼人。') : secretTasks[round.missions[round.roleIndex]]}</p></div>}
           <Button onClick={()=>{ if (round.roleIndex + 1 === players.length) setRound(s=>({...s,phase:'play',timerRunning:currentGame==='wolf'||currentGame==='mission',revealed:false})); else setRound(s=>({...s,roleIndex:s.roleIndex+1,revealed:false})); }}>{round.roleIndex + 1 === players.length ? '所有人准备好了 · 开始！' : '已看完，交给下一位'} <Symbol name="next"/></Button></>}
         {round.phase === 'play' && <>
           {(currentGame==='wolf'||currentGame==='mission') && <><div className="live-banner"><span className="live-dot"/> 游戏正在进行 · {game.name}</div><div className="timer-card"><span>本轮剩余时间</span><strong>{displayTime(round.time)}</strong><div className="timer-actions"><button onClick={()=>setRound(s=>({...s,timerRunning:!s.timerRunning}))}><Symbol name={round.timerRunning?'pause':'play'} size={16}/>{round.timerRunning?'暂停':'继续'}</button><button onClick={()=>setRound(s=>({...s,phase:'judge',timerRunning:false}))}>结束本轮 <Symbol name="next" size={16}/></button></div></div><div className="playing-tip"><div className="tip-illustration"><GameIllustration game={currentGame==='wolf'?'wolf':'mission'}/></div><h3>{currentGame==='wolf'?'狼人正在暗中行动…':'大家正在悄悄完成任务…'}</h3><p>继续正常聊天；手机只负责计时，真实行为在结算时由玩家确认。</p></div><Button variant="secondary" onClick={()=>setRound(s=>({...s,phase:'judge',timerRunning:false}))}>进入结算 <Symbol name="next"/></Button></>}
