@@ -130,7 +130,7 @@ export default function App() {
     setParty(newParty);
     if (quickGame) {
       const chosen = GAMES.find(g => g.id === quickGame)!;
-      if (newParty.players.length >= chosen.min && newParty.players.length <= chosen.max) { launchGame(chosen.id); return; }
+      if (newParty.players.length >= chosen.min && newParty.players.length <= chosen.max) { setCurrentGame(chosen.id); setRound(newRound()); setResult(null); setScreen('game'); return; }
     }
     setScreen('room');
   }
@@ -161,7 +161,7 @@ export default function App() {
   }
   const sortedPlayers = [...players].sort((a,b)=>(party?.scores[b.id]??0)-(party?.scores[a.id]??0));
   const hostedBy = party?.hostMode === 'phone' ? '手机主持' : `${party?.players.find(p=>p.id===party.hostId)?.name ?? '玩家'}主持`;
-  const showNav = ['home', 'library', 'room', 'history', 'me'].includes(screen);
+  const showNav = ['home', 'library', 'history', 'me'].includes(screen);
 
   const gameTile = (g: Game) => {
     const eligible = !party || (g.min <= party.players.length && g.max >= party.players.length);
@@ -173,40 +173,114 @@ export default function App() {
 
   return <div className="app-shell">
     <div className="ambient orb-one"/><div className="ambient orb-two"/>
-    <div className="app-frame">
+    <div className={`app-frame ${['home','create','room'].includes(screen) ? 'v4-frame' : ''}`}>
       {screen === 'home' && <>
-        <TopBar label="" right={<span className="tag tag-light"><Symbol name="sparkle" size={13}/> 朋友聚会必备</span>}/>
-        <main className="page home-page">
-          <div className="home-head"><span className="eyebrow">GOOD GAMES. BETTER FRIENDS. ✦</span><h1>聚在一起<br/><em>玩点有意思的！</em></h1><p>朋友到齐，快乐开局。2–10 人都能玩。</p></div>
-          <section className="hero-card"><span className="hero-sticker">GOOD GAMES · BETTER FRIENDS</span><MascotScene/><div className="hero-caption">聚在一起，玩出更多可能！</div><span className="hero-shine" aria-hidden="true"/></section>
-          <div className="home-actions"><Button onClick={()=>party ? setScreen('room') : createFlow()}><Symbol name="users"/>{party ? '继续聚会' : '开启聚会'}<Symbol name="next" size={20}/></Button><Button variant="secondary" onClick={()=>setScreen('library')}><Symbol name="dice"/>快速玩一局<Symbol name="next" size={20}/></Button></div>
-          <div className="section-heading"><div><span className="section-kicker">PICK YOUR FUN</span><h2>今晚玩什么 <span>✦</span></h2></div><button className="text-link" onClick={()=>setScreen('library')}>全部游戏 <Symbol name="next" size={16}/></button></div>
-          <div className="home-featured"><button className="featured-card" onClick={()=>launchGame('wolf')}><GameIllustration game="wolf"/><span className="featured-description"><strong>饭桌狼人杀</strong><small>推理 · 心理 · 暗战</small></span></button><button className="featured-card alt" onClick={()=>launchGame('mission')}><GameIllustration game="mission"/><span className="featured-description"><strong>秘密任务局</strong><small>隐藏身份 · 偷偷行动</small></span></button></div>
+        <main className="page v4-home" aria-label="一起玩首页">
+          <div className="v4-home-illustration" aria-hidden="true"><img src="/art/home-stage.webp" alt=""/></div>
+          <div className="v4-home-head">
+            <span className="v4-kicker">GOOD GAMES · BETTER FRIENDS</span>
+            <h1 className="v4-brand">一起玩<span className="v4-brand-spark">✦</span></h1>
+            <p className="v4-brand-sub">让聚会更好玩！</p>
+            <p className="v4-brand-detail">2–10 人的线下聚会游戏</p>
+          </div>
+          <div className="v4-hero-bottom" aria-hidden="true"/>
+          <section className="v4-home-actions" aria-label="开始聚会">
+            <button className="v4-action v4-action-pink" onClick={()=>party?setScreen('room'):createFlow()}>
+              <span className="v4-action-symbol"><Symbol name="users" size={29}/></span>
+              <span><strong>{party?'继续聚会':'开启聚会'}</strong><small>{party?'回到你们正在进行的房间':'创建房间，和朋友一起玩'}</small></span>
+              <span className="v4-action-arrow"><Symbol name="next" size={21}/></span>
+            </button>
+            <button className="v4-action v4-action-blue" onClick={()=>setScreen('library')}>
+              <span className="v4-action-symbol"><Symbol name="dice" size={29}/></span>
+              <span><strong>快速玩一局</strong><small>挑选游戏，立即开始</small></span>
+              <span className="v4-action-arrow"><Symbol name="next" size={21}/></span>
+            </button>
+          </section>
+          <div className="v4-section-bar"><h2>本周人气游戏</h2><button onClick={()=>setScreen('library')}>查看更多 <Symbol name="next" size={17}/></button></div>
+          <section className="v4-popular" aria-label="热门聚会游戏">
+            <button className="v4-popular-card v4-popular-wolf" onClick={()=>launchGame('wolf')}>
+              <img src="/art/wolf.webp" alt="狼人主题游戏封面"/>
+              <span className="v4-popular-shade"/>
+              <span className="v4-popular-text"><strong>饭桌狼人杀</strong><small>4–10人 · 推理 · 高互动</small></span>
+            </button>
+            <button className="v4-popular-card v4-popular-mission" onClick={()=>launchGame('mission')}>
+              <img src="/art/mission.webp" alt="秘密任务局主题游戏封面"/>
+              <span className="v4-popular-shade"/>
+              <span className="v4-popular-text"><strong>秘密任务局</strong><small>3–10人 · 整活 · 隐藏任务</small></span>
+            </button>
+          </section>
         </main>
       </>}
 
-      {screen === 'create' && <><TopBar label="创建聚会" back={()=>setScreen('home')}/><main className="page setup-page">
-        <div className="page-title"><span className="eyebrow">SET UP YOUR PARTY</span><h1>人齐了，<em>就开玩！</em></h1><p>只需设置人数、昵称和主持人。</p></div>
-        <div className="form-panel"><label className="form-label" htmlFor="party-name">聚会名称 <span>可修改</span></label><input className="input" id="party-name" value={partyName} maxLength={20} onChange={e=>setPartyName(e.target.value)} placeholder="给今晚的聚会起个名字"/>
-          <div className="control-row"><div><h3>有几个人玩？</h3><p>支持 2–10 人</p></div><NumberControl count={draftPlayers.length} setCount={setCount}/></div>
-          <div className="form-label inline">玩家昵称 <span>点按修改 · {draftPlayers.length}/10</span></div>
-          <div className="player-form-grid">{draftPlayers.map((p,i)=><label className="player-input" key={p.id}><Avatar player={p} size={42}/><input aria-label={`玩家${i+1}昵称`} value={p.name} maxLength={10} onChange={e=>setDraftPlayers(old=>old.map(a=>a.id===p.id?{...a,name:e.target.value}:a))}/></label>)}</div>
-        </div>
-        <div className="form-panel host-panel"><div className="form-label inline">谁来主持游戏？ <span>必选</span></div><div className="host-options"><button className={`host-choice ${hostMode==='phone'?'selected':''}`} onClick={()=>setHostMode('phone')}><span className="host-icon"><Symbol name="phone" size={26}/></span><strong>手机主持</strong><small>自动展示规则、计时与提示</small><span className="radio-dot"/></button><button className={`host-choice ${hostMode==='player'?'selected':''}`} onClick={()=>setHostMode('player')}><span className="host-icon"><Symbol name="crown" size={26}/></span><strong>指定玩家</strong><small>由一位朋友掌控流程</small><span className="radio-dot"/></button></div>
-          {hostMode==='player' && <div className="host-select"><p>选择主持人</p><div>{draftPlayers.map(p=><button key={p.id} className={`host-player ${hostId===p.id?'selected':''}`} onClick={()=>setHostId(p.id)}><Avatar player={p} size={34}/><span>{p.name || '未命名'}</span>{hostId===p.id && <Symbol name="check" size={17}/>}</button>)}</div></div>}
-        </div>
-        <div className="sticky-action"><Button onClick={makeParty}>{quickGame ? '开始游戏' : '创建聚会'} <Symbol name="next"/></Button><p>一部手机就能玩，无需所有人下载</p></div>
-      </main></>}
+      {screen === 'create' && <>
+        <header className="v4-topbar"><button aria-label="返回首页" className="v4-topback" onClick={()=>setScreen('home')}><Symbol name="back"/></button><strong>创建聚会</strong><span className="v4-header-orbit" aria-hidden="true">✧</span></header>
+        <main className="page v4-create" aria-label="创建聚会">
+          <p className="v4-create-lede">填写信息，马上开始我们的聚会游戏！</p>
+          <section className="v4-create-section">
+            <h2 className="v4-step-title"><span>1</span>选择人数</h2>
+            <div className="v4-people-control">
+              <span className="v4-count-figures" aria-hidden="true"><img src="/art/avatar-2.webp" alt=""/><img src="/art/avatar-3.webp" alt=""/></span>
+              <small>2–10 人</small>
+              <NumberControl count={draftPlayers.length} setCount={setCount}/>
+            </div>
+          </section>
+          <section className="v4-create-section">
+            <h2 className="v4-step-title"><span>2</span>设置玩家昵称 <small>({draftPlayers.length}/10)</small></h2>
+            <div className="v4-player-editor">{draftPlayers.map((p,i)=><label className="v4-player-line" key={p.id}>
+              <span className="v4-player-index">{i+1}</span><Avatar player={p} size={36}/>
+              <input aria-label={`第${i+1}位玩家昵称`} value={p.name} maxLength={10} onChange={e=>setDraftPlayers(old=>old.map(a=>a.id===p.id?{...a,name:e.target.value}:a))}/>
+              <span className="v4-player-edit-icon"><Symbol name="check" size={15}/></span>
+            </label>)}</div>
+            <p className="v4-edit-note">昵称可随时修改；增减玩家请使用上方人数控制。</p>
+          </section>
+          <section className="v4-create-section v4-host-section">
+            <h2 className="v4-step-title"><span>3</span>选择主持方式</h2>
+            <div className="v4-host-options">
+              <button aria-pressed={hostMode==='phone'} className={`v4-host-option ${hostMode==='phone'?'active':''}`} onClick={()=>setHostMode('phone')}>
+                <span className="v4-host-check"><Symbol name="check" size={12}/></span><span className="v4-host-icon"><Symbol name="phone" size={24}/></span>
+                <strong>手机主持</strong><small>自动提示游戏流程、发身份及计时</small>
+              </button>
+              <button aria-pressed={hostMode==='player'} className={`v4-host-option ${hostMode==='player'?'active':''}`} onClick={()=>setHostMode('player')}>
+                <span className="v4-host-check"><Symbol name="check" size={12}/></span><span className="v4-host-icon"><Symbol name="users" size={24}/></span>
+                <strong>指定玩家主持</strong><small>选一位朋友手动控制游戏流程</small>
+              </button>
+            </div>
+            {hostMode==='player'&&<div className="v4-host-pick"><p>选择主持人</p><div>{draftPlayers.map(p=><button aria-pressed={hostId===p.id} key={p.id} className={hostId===p.id?'selected':''} onClick={()=>setHostId(p.id)}><Avatar player={p} size={27}/>{p.name||'未命名'}{hostId===p.id&&<Symbol name="check" size={14}/>}</button>)}</div></div>}
+          </section>
+          <div className="v4-submit-wrap"><button className="v4-submit" onClick={makeParty}><strong>{quickGame?'开始游戏':'创建聚会'}</strong><Symbol name="next" size={22}/></button><small>一部手机就能玩，无需所有人下载</small></div>
+        </main>
+      </>}
 
-      {screen === 'room' && party && <><TopBar label="聚会房间" back={()=>setScreen('home')} right={<span className="tag tag-active">● 进行中</span>}/><main className="page room-page">
-        <div className="room-hero"><div className="room-hero-top"><div><span className="eyebrow">PARTY IS ON ✦</span><h1>{party.title}</h1><p>{players.length} 位朋友 · {hostedBy}</p></div><span className="room-big-icon"><Symbol name="sparkle" size={35}/></span></div><div className="room-players">{players.map(p=><div key={p.id} className="room-player"><Avatar player={p} size={44}/><small>{p.name}</small></div>)}</div></div>
-        <div className="room-stats"><div><strong>{party.records.length}</strong><span>已玩场次</span></div><div><strong>{players.length}</strong><span>参与朋友</span></div><div><strong>{Object.values(party.scores).reduce((a,b)=>a+b,0)}</strong><span>总获得积分</span></div></div>
-        <div className="section-heading compact-heading"><div><span className="section-kicker">BASED ON YOUR PARTY</span><h2>这局玩什么？</h2></div><button className="text-link" onClick={()=>setScreen('library')}>更多游戏 <Symbol name="next" size={16}/></button></div>
-        <div className="game-list">{recommendations.slice(0,4).map(gameTile)}</div>
-        <div className="section-heading compact-heading"><div><h2>聚会排行榜 <span><Symbol name="trophy" size={17}/></span></h2></div></div>
-        <section className="leaderboard">{sortedPlayers.map((p,i)=><div className="leader-item" key={p.id}><span className={`rank rank-${i+1}`}>{i+1}</span><Avatar player={p} size={36}/><span>{p.name}</span><strong>{party.scores[p.id]??0} <small>分</small></strong></div>)}</section>
-        <div className="room-bottom-actions"><Button variant="secondary" onClick={()=>setConfirmEnd(true)}><Symbol name="trophy" size={18}/>结束聚会 · 生成战报</Button></div>
-      </main></>}
+      {screen === 'room' && party && <>
+        <header className="v4-topbar v4-room-topbar"><button className="v4-topback" aria-label="返回首页" onClick={()=>setScreen('home')}><Symbol name="back"/></button><span><strong>{party.title}</strong><small><span className="v4-live-dot"/> {players.length} 位玩家 · {hostedBy} · 进行中</small></span><button className="v4-room-settings" onClick={()=>setToast('本局的玩家信息将在下次创建聚会时设置')} aria-label="房间设置"><Symbol name="sparkle" size={19}/></button></header>
+        <main className="page v4-room" aria-label="聚会房间">
+          <section className="v4-room-roster" aria-label="当前聚会的玩家">{players.map(p=><div className="v4-room-person" key={p.id}><Avatar player={p} size={46}/><small>{p.name}</small></div>)}</section>
+          <section className="v4-leader-panel" aria-label="聚会积分排行榜">
+            <div className="v4-panel-heading"><h2>当前积分排行</h2><span>本场聚会实时排名</span></div>
+            <div className="v4-leader-list">{sortedPlayers.map((p,i)=>{
+              const score=party.scores[p.id]??0;
+              const maxScore=Math.max(10,...players.map(x=>party.scores[x.id]??0));
+              return <div className="v4-leader-row" key={p.id}>
+                <span className={`v4-leader-rank rank-${i+1}`}>{i<3?<Symbol name="crown" size={20}/>:i+1}</span>
+                <Avatar player={p} size={35}/><span className="v4-leader-name">{p.name}</span>
+                <span className="v4-leader-track"><i style={{width:`${Math.max(score===0?4:9,score/maxScore*100)}%`}}/></span><strong>{score}</strong>
+              </div>;
+            })}</div>
+          </section>
+          <div className="v4-section-bar v4-room-section"><span><h2>接下来玩什么？</h2><small>按当前人数推荐</small></span><button onClick={()=>setScreen('library')}><Symbol name="refresh" size={17}/> 更多</button></div>
+          <section className="v4-room-suggestions">{recommendations.slice(0,3).map(g=><button key={g.id} onClick={()=>launchGame(g.id)} className={`v4-suggestion suggestion-${g.id}`}>
+            <GameIllustration game={g.id}/><span className="v4-suggestion-shade"/>
+            <span className="v4-suggestion-caption"><strong>{g.name}</strong><small>{g.category} · {g.mins}分钟</small></span>
+          </button>)}</section>
+          <div className="v4-room-toolbar" aria-label="聚会操作">
+            <button onClick={()=>setScreen('library')}><Symbol name="games" size={19}/>游戏库</button>
+            <button onClick={()=>setScreen('history')}><Symbol name="clock" size={19}/>本局记录</button>
+            <button className="v4-start-next" onClick={()=>recommendations[0]?launchGame(recommendations[0].id):setScreen('library')}><Symbol name="dice" size={24}/>开始游戏</button>
+            <button onClick={()=>setToast('玩家名单由创建聚会时统一设置')}><Symbol name="users" size={19}/>成员</button>
+            <button onClick={()=>setConfirmEnd(true)}><Symbol name="trophy" size={19}/>结束</button>
+          </div>
+        </main>
+      </>}
 
       {screen === 'library' && <><TopBar label="游戏库" back={()=>setScreen(party?'room':'home')} right={<span className="tag tag-light">{GAMES.length} 款游戏</span>}/><main className="page library-page">
         <div className="page-title small-title"><span className="eyebrow">CHOOSE YOUR GAME ✦</span><h1>想玩什么？<em>随便挑！</em></h1><p>{party ? `本场 ${players.length} 人 · 自动提示不适合人数的游戏` : '先选游戏，再设置人数和昵称'}</p></div>
